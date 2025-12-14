@@ -124,8 +124,12 @@ app.post('/admin/attendance', async (req, res) => {
 
   res.send({ message: 'Attendance marked' });
 });
-
+// test route
+app.get("/"),(req,res) => {
+  res.send("Skedbord Play Park Backend is Running");
+    });
 // ===== START SERVER =====
 app.listen(5000, () => {
   console.log('Server running on port 5000');
 });
+
