@@ -105,25 +105,36 @@ app.post('/admin/assign', async (req, res) => {
   res.send({ message: 'Membership assigned successfully' });
 });
 
-// Admin – mark attendance
-app.post('/admin/attendance', async (req, res) => {
-  const { userId } = req.body;
+// Admin marks attendance
+app.post("/admin/attendance", async (req, res) => {
+  try {
+    const { userId } = req.body;
 
-  const membership = await Membership.findOne({ userId, status: 'active' });
-  if (!membership || membership.remainingDays <= 0)
-    return res.status(400).send('No active membership');
+    const membership = await Membership.findOne({
+      userId,
+      status: "active",
+    });
 
-  membership.remainingDays--;
-  await membership.save();
+    if (!membership || membership.remainingDays <= 0) {
+      return res.status(400).send("No active membership");
+    }
 
-  await Attendance.create({
-    userId,
-    date: new Date().toDateString(),
-    markedBy: ADMIN_NAME
-  });
+    membership.remainingDays--;
+    await membership.save();
 
-  res.send({ message: 'Attendance marked' });
+    await Attendance.create({
+      userId,
+      date: new Date().toDateString(),
+      markedBy: ADMIN_NAME,
+    });
+
+    res.send({ message: "Attendance marked" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
+
 // test route
 app.get("/"),(req,res) => {
   res.send("Skedbord Play Park Backend is Running");
@@ -134,5 +145,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log('Server running on port ',PORT);
 });
+
 
 
